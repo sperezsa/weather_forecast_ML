@@ -1,0 +1,25 @@
+stages:
+  extract:
+    cmd: uv run python src/extract.py
+    deps:
+    - src/extract.py
+    - data/weather.db
+    outs:
+    - data/raw_weather.csv
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - data/raw_weather.csv
+    - src/prepare.py
+    outs:
+    - data/prepared
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/prepared
+    - src/train.py
+    outs:
+    - models/weather_model.pkl
+    metrics:
+    - reports/metrics.json:
+        cache: false

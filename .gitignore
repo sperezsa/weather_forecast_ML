@@ -1,0 +1,16 @@
+# Entorno virtual
+.venv/
+__pycache__/
+
+# Datos y base de datos (DVC gestiona esto)
+data/
+*.db
+*.csv
+
+# Modelos y ejecutables
+models/
+*.exe
+
+# Logs y temporales
+*.log
+.python-version

@@ -1,0 +1,56 @@
+schema: '2.0'
+stages:
+  extract:
+    cmd: uv run python src/extract.py
+    deps:
+    - path: data/weather.db
+      hash: md5
+      md5: d0acc6e22f55f73262ede1f1ab1c026f
+      size: 294912
+    - path: src/extract.py
+      hash: md5
+      md5: 6cb9c720bd6cc3f3022bd065f37080f2
+      size: 623
+    outs:
+    - path: data/raw_weather.csv
+      hash: md5
+      md5: 2de6f86036419d27f64c248aa2f7d09b
+      size: 132611
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: data/raw_weather.csv
+      hash: md5
+      md5: 2de6f86036419d27f64c248aa2f7d09b
+      size: 132611
+    - path: src/prepare.py
+      hash: md5
+      md5: bbff7ea3ddbcdd008a356ac51bbd5105
+      size: 2925
+    outs:
+    - path: data/prepared
+      hash: md5
+      md5: c06959f79b99923c189e4735d8db4a02.dir
+      size: 69393
+      nfiles: 4
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: c06959f79b99923c189e4735d8db4a02.dir
+      size: 69393
+      nfiles: 4
+    - path: src/train.py
+      hash: md5
+      md5: 33e8fd2d4d74f1a5ccd05ded86f74b7f
+      size: 2242
+    outs:
+    - path: models/weather_model.pkl
+      hash: md5
+      md5: 15a65e4ecaafe5cf110cbf5b988d9178
+      size: 5114529
+    - path: reports/metrics.json
+      hash: md5
+      md5: 92c2474db4f825a22b1d463e1cb250fe
+      size: 65
