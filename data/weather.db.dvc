@@ -1,0 +1,5 @@
+outs:
+- md5: d0acc6e22f55f73262ede1f1ab1c026f
+  size: 294912
+  hash: md5
+  path: weather.db
