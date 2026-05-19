@@ -20,7 +20,7 @@ def train_model():
     n_estimators = params["train"]["n_estimators"]
     max_depth    = params["train"]["max_depth"]
 
-    print(f"Entrenando RandomForest con n_estimators={n_estimators}...")
+    print(f"Entrenando RandomForest con n_estimators={n_estimators} y max_deph {max_depth}")
     rf = RandomForestRegressor(
         n_estimators=n_estimators, 
         max_depth=max_depth, 
