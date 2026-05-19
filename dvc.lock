@@ -43,8 +43,12 @@ stages:
       nfiles: 4
     - path: src/train.py
       hash: md5
-      md5: 33e8fd2d4d74f1a5ccd05ded86f74b7f
-      size: 2242
+      md5: 4d55f5691bbbd90a9a7f75b5f9644472
+      size: 2262
+    params:
+      params.yaml:
+        train.max_depth: 10
+        train.n_estimators: 100
     outs:
     - path: models/weather_model.pkl
       hash: md5
