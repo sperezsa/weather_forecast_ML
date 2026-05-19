@@ -16,7 +16,7 @@ El proyecto utiliza DVC para gestionar las etapas de datos:
 
 Este proyecto utiliza **DVC (Data Version Control)** combinado con **Google Cloud Storage (GCS)** para gestionar el ciclo de vida de los datos y los modelos de Machine Learning de forma eficiente y colaborativa. 
 
-La base de datos original (`weather.db`), los datasets intermedios y los modelos entrenados están almacenados de forma segura en la nube, por lo que **no se suben a GitHub** ni se incluyen en el clonado inicial.
+La base de datos original (`weather.db`), los datasets intermedios y los modelos entrenados están almacenados de forma segura en la nube en un bucket, por lo que **no se suben a GitHub** ni se incluyen en el clonado inicial.
 
 ### 🚀 Guía de Inicio Rápido para Consulta
 
@@ -32,14 +32,22 @@ Utilizamos `uv` como gestor de entornos y paquetes para asegurar que todos usemo
    uv sync
    ```
 
-2. **Descarga los artefactos del Pipeline (Datos preparados y Modelos):**
-El almacenamiento de Google Cloud está configurado con acceso público de solo lectura (vía HTTP) para descargas rápidas. No necesitas configurar claves de GCP para bajarte el modelo actual ni los datos procesados:
+2. **Clave privada para acceso al bucket**
+Al hacer privado el acceso al bucket, el paso adicional a ejecutar sería disponer de la clave privada para acceder al mismo.
+Coloca la clave en el proyecto y ejecuta este comando para actualizar el fichero local donde se indica dónde se encuentra la clave:
+
+   ```bash
+   uv run dvc remote modify storage-privado credentialpath ruta/fichero/clave.json --local
+   ```
+
+3. **Descarga los artefactos del Pipeline (Datos preparados y Modelos):**
+El almacenamiento de Google Cloud está configurado con acceso privado, se requiere ejecutar el paso anterior para configurar claves de GCP para bajarte el modelo actual y los datos procesados:
 
    ```bash
    uv run dvc pull
    ```
 
-3. **Descarga la Base de Datos original:**
+4. **Descarga la Base de Datos original:**
 Para poder ejecutar o reproducir el pipeline completo desde cero, necesitas traerte explícitamente el archivo de la base de datos meteorológica ejecutando:
 
    ```bash
