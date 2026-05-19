@@ -12,25 +12,50 @@ El proyecto utiliza DVC para gestionar las etapas de datos:
 - **R² Score**: 0.95
 - **MAE**: 1.68 °C
 
-## 🛠️ Instalación y Ejecución
+## 🛠️ Instalación, Configuración y Ejecución
 
-1. Clonar el repo y preparar entorno:
-```bash
-git clone https://github.com/sperezsa/weather_forecast_ML.git
-cd weather_forecast_ML
-uv sync
-```
+Este proyecto utiliza **DVC (Data Version Control)** combinado con **Google Cloud Storage (GCS)** para gestionar el ciclo de vida de los datos y los modelos de Machine Learning de forma eficiente y colaborativa. 
 
-2. Reproducir el pipeline
+La base de datos original (`weather.db`), los datasets intermedios y los modelos entrenados están almacenados de forma segura en la nube, por lo que **no se suben a GitHub** ni se incluyen en el clonado inicial.
 
-Si tienes acceso a los datos originales o al remoto de DVC:
+### 🚀 Guía de Inicio Rápido para Consulta
 
-```bash
-uv run dvc repro
-```
+Si estás clonando el proyecto, sigue estos pasos para sincronizar tu entorno:
 
-3. Ver métricas
+1. **Clona el repositorio e instala las dependencias:**
+Utilizamos `uv` como gestor de entornos y paquetes para asegurar que todos usemos exactamente las mismas librerías.
 
-```bash
-uv run dvc metrics show
-```
+   ```bash
+   mkdir C:\weather_forecast_ML
+   cd weather_forecast_ML
+   git clone https://github.com/sperezsa/weather_forecast_ML.git .
+   uv sync
+   ```
+
+2. **Descarga los artefactos del Pipeline (Datos preparados y Modelos):**
+El almacenamiento de Google Cloud está configurado con acceso público de solo lectura (vía HTTP) para descargas rápidas. No necesitas configurar claves de GCP para bajarte el modelo actual ni los datos procesados:
+
+   ```bash
+   uv run dvc pull
+   ```
+
+3. **Descarga la Base de Datos original:**
+Para poder ejecutar o reproducir el pipeline completo desde cero, necesitas traerte explícitamente el archivo de la base de datos meteorológica ejecutando:
+
+   ```bash
+   uv run dvc pull data/weather.db.dvc
+   ```
+
+4. **Verifica y ejecuta el Pipeline:**
+Una vez descargado todo, puedes comprobar el estado del proyecto o lanzar el entrenamiento completo de Machine Learning con:
+
+   ```bash
+   # Debería indicar que todo está al día (Up to date)
+   uv run dvc status
+
+   # Ejecuta el pipeline respetando la caché de DVC
+   uv run dvc repro
+   ```
+
+🛠️ ¿Quieres experimentar y guardar cambios en la nube?
+El acceso por defecto vía dvc pull es público y de solo lectura, por lo que no podrás realizar cambios en el dataset original o registrar un nuevo modelo oficial en la nube (dvc push).
