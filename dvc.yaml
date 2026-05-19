@@ -18,6 +18,9 @@ stages:
     deps:
     - data/prepared
     - src/train.py
+    params:
+    - train.n_estimators
+    - train.max_depth
     outs:
     - models/weather_model.pkl
     metrics:
