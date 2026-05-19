@@ -1,0 +1,4 @@
+[core]
+    remote = storage-publico
+['remote "storage-publico"']
+    url = gs://sps-weather-data
