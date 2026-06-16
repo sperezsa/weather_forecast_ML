@@ -1,0 +1,42 @@
+name: Build and Push Docker Image
+
+# El pipeline se activa solo cuando haces un push a la rama 'main'
+on:
+  push:
+    branches:
+      - main
+
+# Permisos necesarios para que GitHub Actions pueda guardar la imagen en su propio registro
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Descarga el código de tu repositorio en la máquina virtual de GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Se loguea automáticamente en el registro de contenedores de GitHub
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Prepara las herramientas de Docker en la máquina virtual
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4. Construye la imagen y la sube a GHCR de forma gratuita e ilimitada
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          # El nombre de la imagen será: ghcr.io/tu-usuario/weather_forecast_ml:latest
+          tags: ghcr.io/${{ github.repository }}:latest
