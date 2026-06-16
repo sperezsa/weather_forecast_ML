@@ -9,7 +9,7 @@ COPY pyproject.toml uv.lock ./
 
 # 4. Instalamos las dependencias del proyecto de forma global en el contenedor
 # Usamos --system porque dentro de un contenedor Docker no necesitamos un entorno virtual (.venv)
-RUN uv pip install --system .
+RUN uv pip install --system . --verbose
 
 # 5. Copiamos el resto de tu código fuente al contenedor
 COPY src/ ./src
