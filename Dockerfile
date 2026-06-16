@@ -4,20 +4,15 @@ FROM ghcr.io/astral-sh/uv:python3.11-alpine
 # 2. Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# 3. Copiamos los archivos que definen las dependencias
+# 3. Copiamos solo los archivos de configuración primero (para aprovechar la caché de Docker)
 COPY pyproject.toml uv.lock ./
 
-# 4. Instalamos las dependencias del proyecto de forma global en el contenedor
-# Usamos --system porque dentro de un contenedor Docker no necesitamos un entorno virtual (.venv)
-RUN uv pip install --system . --verbose
-
-# 5. Copiamos el resto de tu código fuente al contenedor
+# 4. AHORA copiamos todo el código fuente antes de intentar instalar
 COPY src/ ./src
 COPY data/ ./data
 
-# 6. Definimos variables de entorno por defecto (Desarrollo por defecto)
-# Airflow podrá sobrescribir esta variable en producción a "PRODUCTION"
-ENV ENVIRONMENT="DEVELOPMENT"
+# 5. Instalamos las dependencias
+RUN uv pip install --system .
 
-# 7. El comando que se ejecutará cuando el contenedor se encienda
+# 6. Comando por defecto
 CMD ["python", "src/train.py"]
