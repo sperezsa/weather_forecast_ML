@@ -1,5 +1,5 @@
 # 1. Usamos una imagen oficial y ligera de Python que ya viene con 'uv' instalado
-FROM ghcr.io/astral-sh/uv:python3.11-alpine
+FROM ghcr.io/astral-sh/uv:python3.12-alpine
 
 # 2. Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
