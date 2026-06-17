@@ -1,49 +1,4 @@
 ## 1. Usamos una imagen oficial y ligera de Python que ya viene con 'uv' instalado
-##FROM ghcr.io/astral-sh/uv:python3.12-alpine
-#FROM python:3.12-slim
-#
-## 2. Instalamos 'uv' de la forma oficial
-#COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-#
-## 3. Establecemos el directorio de trabajo dentro del contenedor
-#WORKDIR /app
-#
-## 4. Copiamos solo los archivos de configuración primero (para aprovechar la caché de Docker)
-#COPY pyproject.toml uv.lock ./
-#
-## 5. Instalamos las dependencias
-## 'slim' ya incluye los binarios necesarios, así que 'uv' descargará 
-## las versiones pre-compiladas (wheels) y no intentará compilarlas.
-#RUN uv pip install --system .
-#
-## 6. Copiamos todo el código fuente antes de intentar instalar
-#COPY src/ ./src
-#COPY data/ ./data
-## Copiamos la carpeta .dvc para que el contenedor sepa dónde ir a buscar los datos
-#COPY .dvc/ ./.dvc/
-#COPY .dvcignore .dvcignore
-#COPY .git/ ./.git/
-#
-## Antes del RUN dvc pull, vamos a listar los archivos para depurar
-#RUN ls -R /app/data/prepared/
-#
-#RUN dvc pull data/prepared/train_X.csv.dvc
-#
-#
-## 7. PASO PENDIENTE DE VALIDAR 
-## Instalamos DVC y descargamos los datos REALES desde el S3/Remoto
-## Necesitarás pasar las credenciales como ARG si usas S3 privado
-## RUN uv pip install --system dvc[s3]
-#RUN dvc pull /app/data/prepared/train_X.csv.dvc
-#
-## 8. Comando por defecto
-#CMD ["python", "src/train.py"]
-
-
-############################################################################
-# nueva version
-############################################################################
-
 FROM python:3.12-slim
 
 # Instalamos git, ya que DVC lo requiere para identificar el root del repo
@@ -54,23 +9,33 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-# Copiamos solo lo necesario para el setup inicial
-COPY pyproject.toml uv.lock ./
+COPY data/weather.db.dvc ./data/weather.db.dvc
 
-# Instalamos dependencias incluyendo dvc
+# Copiamos los archivos de configuración y la definición del pipeline
+COPY src/ ./src/
+COPY dvc.yaml dvc.lock ./
+COPY pyproject.toml uv.lock ./
+COPY .dvc/ ./.dvc/
+COPY .git/ ./.git/
+COPY params.yaml ./
+
+# Instalamos las dependencias del proyecto y DVC con todos sus drivers
 RUN uv pip install --system . "dvc[all]"
 
-# Copiamos el historial de Git y la configuración de DVC (esencial para que dvc pull funcione)
-COPY .git/ ./.git/
-COPY .dvc/ ./.dvc/
-COPY .dvcignore ./.dvcignore
+RUN dvc checkout
 
-# Copiamos el resto del código
-COPY src/ ./src/
+# Diagnóstico: ver qué ve Docker y qué dice DVC exactamente
+#RUN ls -la /app/data/ && \
+#    dvc pull -v data/weather.db.dvc
 
-# Ejecutamos el pull de DVC antes de entrenar.
-# DVC usará la configuración remota que ya tienes en .dvc/config
-RUN dvc pull data/prepared/train_X.csv.dvc
+RUN mkdir -p reports data/prepared models
 
-# Ejecutamos el entrenamiento
+# 1. Recuperamos únicamente la BBDD base desde el almacenamiento remoto
+RUN dvc pull /app/data/weather.db.dvc
+
+# 2. Ejecutamos el pipeline completo de DVC (extract -> prepare -> train)
+# DVC leerá dvc.yaml y ejecutará los pasos en orden
+RUN dvc repro
+
+# Comando final que mantiene el contenedor activo o realiza una acción adicional
 CMD ["python", "src/train.py"]
