@@ -24,6 +24,12 @@ COPY .dvc/ ./.dvc/
 COPY .dvcignore .dvcignore
 COPY .git/ ./.git/
 
+# Antes del RUN dvc pull, vamos a listar los archivos para depurar
+RUN ls -R /app/data/prepared/
+
+RUN dvc pull data/prepared/train_X.csv.dvc
+
+
 # 7. PASO PENDIENTE DE VALIDAR 
 # Instalamos DVC y descargamos los datos REALES desde el S3/Remoto
 # Necesitarás pasar las credenciales como ARG si usas S3 privado
