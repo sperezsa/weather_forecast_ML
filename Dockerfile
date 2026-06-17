@@ -28,7 +28,7 @@ COPY .git/ ./.git/
 # Instalamos DVC y descargamos los datos REALES desde el S3/Remoto
 # Necesitarás pasar las credenciales como ARG si usas S3 privado
 # RUN uv pip install --system dvc[s3]
-RUN dvc pull data/prepared/train_X.csv.dvc
+RUN dvc pull /app/data/prepared/train_X.csv.dvc
 
 # 8. Comando por defecto
 CMD ["python", "src/train.py"]
