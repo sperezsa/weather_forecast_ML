@@ -43,8 +43,8 @@ stages:
       nfiles: 4
     - path: src/train.py
       hash: md5
-      md5: 4d55f5691bbbd90a9a7f75b5f9644472
-      size: 2262
+      md5: 7e9699071d7ab0d96470ed7d7a071a19
+      size: 2264
     params:
       params.yaml:
         train.max_depth: 10

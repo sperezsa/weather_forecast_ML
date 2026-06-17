@@ -29,7 +29,6 @@ RUN mkdir -p reports data/prepared models
 ENV GCS_ANONYMOUS=true
 ENV GOOGLE_APPLICATION_CREDENTIALS=""
 
-
 # 1. Recuperamos únicamente la BBDD base desde el almacenamiento remoto
 #RUN dvc pull /app/data/weather.db.dvc
 RUN dvc pull -r storage-publico data/weather.db.dvc
