@@ -22,7 +22,8 @@ COPY params.yaml ./
 # Instalamos las dependencias del proyecto y DVC con todos sus drivers
 RUN uv pip install --system . "dvc[all]"
 
-RUN dvc checkout
+# eliminar
+#RUN dvc remote modify --local storage-publico gss3_anonymous true && dvc remote default storage-publico
 
 # Diagnóstico: ver qué ve Docker y qué dice DVC exactamente
 #RUN ls -la /app/data/ && \
@@ -30,8 +31,15 @@ RUN dvc checkout
 
 RUN mkdir -p reports data/prepared models
 
+# VARIABLES DE ENTORNO PARA ACCESO PÚBLICO A GCS
+# GCS_READ_ONLY=true y el resto deshabilitan la búsqueda de credenciales
+ENV GCS_ANONYMOUS=true
+ENV GOOGLE_APPLICATION_CREDENTIALS=""
+
+
 # 1. Recuperamos únicamente la BBDD base desde el almacenamiento remoto
-RUN dvc pull /app/data/weather.db.dvc
+#RUN dvc pull /app/data/weather.db.dvc
+RUN dvc pull -r storage-publico data/weather.db.dvc
 
 # 2. Ejecutamos el pipeline completo de DVC (extract -> prepare -> train)
 # DVC leerá dvc.yaml y ejecutará los pasos en orden
