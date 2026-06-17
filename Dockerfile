@@ -22,6 +22,7 @@ COPY data/ ./data
 # Copiamos la carpeta .dvc para que el contenedor sepa dónde ir a buscar los datos
 COPY .dvc/ ./.dvc/
 COPY .dvcignore .dvcignore
+COPY .git/ ./.git/
 
 # 7. PASO PENDIENTE DE VALIDAR 
 # Instalamos DVC y descargamos los datos REALES desde el S3/Remoto
