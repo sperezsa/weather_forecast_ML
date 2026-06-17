@@ -43,7 +43,8 @@ RUN dvc pull -r storage-publico data/weather.db.dvc
 
 # 2. Ejecutamos el pipeline completo de DVC (extract -> prepare -> train)
 # DVC leerá dvc.yaml y ejecutará los pasos en orden
-RUN dvc repro
+# RUN dvc repro
 
 # Comando final que mantiene el contenedor activo o realiza una acción adicional
-CMD ["python", "src/train.py"]
+#CMD ["python", "src/train.py"]
+CMD ["dvc", "repro"]
