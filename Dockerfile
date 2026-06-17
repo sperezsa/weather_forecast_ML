@@ -22,13 +22,6 @@ COPY params.yaml ./
 # Instalamos las dependencias del proyecto y DVC con todos sus drivers
 RUN uv pip install --system . "dvc[all]"
 
-# eliminar
-#RUN dvc remote modify --local storage-publico gss3_anonymous true && dvc remote default storage-publico
-
-# Diagnóstico: ver qué ve Docker y qué dice DVC exactamente
-#RUN ls -la /app/data/ && \
-#    dvc pull -v data/weather.db.dvc
-
 RUN mkdir -p reports data/prepared models
 
 # VARIABLES DE ENTORNO PARA ACCESO PÚBLICO A GCS
@@ -43,8 +36,11 @@ RUN dvc pull -r storage-publico data/weather.db.dvc
 
 # 2. Ejecutamos el pipeline completo de DVC (extract -> prepare -> train)
 # DVC leerá dvc.yaml y ejecutará los pasos en orden
-# RUN dvc repro
+#RUN dvc checkout 
+#RUN dvc repro
 
 # Comando final que mantiene el contenedor activo o realiza una acción adicional
 #CMD ["python", "src/train.py"]
-CMD ["dvc", "repro"]
+#CMD ["dvc", "repro", "--force"]
+CMD ["dvc", "repro", "--downstream", "extract"]
+#CMD ["sh", "-c", "dvc checkout && dvc repro"]
