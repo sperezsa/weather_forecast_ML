@@ -16,10 +16,18 @@ COPY pyproject.toml uv.lock ./
 # las versiones pre-compiladas (wheels) y no intentará compilarlas.
 RUN uv pip install --system .
 
-
 # 6. Copiamos todo el código fuente antes de intentar instalar
 COPY src/ ./src
 COPY data/ ./data
+# Copiamos la carpeta .dvc para que el contenedor sepa dónde ir a buscar los datos
+COPY .dvc/ ./.dvc/
+COPY .dvcignore .dvcignore
 
-# 7. Comando por defecto
+# 7. PASO PENDIENTE DE VALIDAR 
+# Instalamos DVC y descargamos los datos REALES desde el S3/Remoto
+# Necesitarás pasar las credenciales como ARG si usas S3 privado
+# RUN uv pip install --system dvc[s3]
+RUN dvc pull data/prepared/train_X.csv.dvc
+
+# 8. Comando por defecto
 CMD ["python", "src/train.py"]
